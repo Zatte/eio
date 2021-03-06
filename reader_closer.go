@@ -4,25 +4,29 @@ import (
 	"io"
 )
 
-// readCloserImpl ads a NOP Close method to any Reader.
-type readCloserImpl struct {
-	io.Reader
-	closer func() error
+// CustomReadCloser implements custom methods for Read and Close calls
+type CustomReadCloser struct {
+	Closer func() error
+	Reader func(p []byte) (n int, err error)
 }
 
 // Close is a NOP if not specified by a user.
-func (nc readCloserImpl) Close() error {
-	if nc.closer != nil {
-		return nc.closer()
+func (nc CustomReadCloser) Close() error {
+	if nc.Closer != nil {
+		return nc.Closer()
 	}
 	return nil
 }
 
+func (nc CustomReadCloser) Read(p []byte) (n int, err error) {
+	return nc.Reader(p)
+}
+
 // NewReadCustomCloser returns a ReadCloser; will decorate the Reader with the a user provider closer
 func NewReadCustomCloser(r io.Reader, closer func() error) io.ReadCloser {
-	return &readCloserImpl{
-		Reader: r,
-		closer: closer,
+	return &CustomReadCloser{
+		Reader: r.Read,
+		Closer: closer,
 	}
 }
 

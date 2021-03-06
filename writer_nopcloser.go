@@ -8,9 +8,9 @@ func NewWriteCustomCloser(w io.Writer, f func() error) io.WriteCloser {
 		f = func() error { return nil }
 	}
 
-	return &customWriteCloser{
-		writer: w.Write,
-		closer: f,
+	return &CustomWriteCloser{
+		Writer: w.Write,
+		Closer: f,
 	}
 }
 

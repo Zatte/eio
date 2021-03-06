@@ -30,8 +30,8 @@ func NewSpanWriter(
 
 	reInitWriter()
 
-	return &customWriteCloser{
-		closer: func() error {
+	return &CustomWriteCloser{
+		Closer: func() error {
 			if err := currentWriter.Close(); err != nil {
 				return err
 			}
@@ -39,7 +39,7 @@ func NewSpanWriter(
 			lastErr = ErrAlreadyClosed
 			return nil
 		},
-		writer: func(p []byte) (n int, err error) {
+		Writer: func(p []byte) (n int, err error) {
 			if currentWriter == nil {
 				reInitWriter()
 			}

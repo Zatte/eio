@@ -18,7 +18,11 @@ Utilities
 
 // Custom Close methods
 eio.NewReadCustomCloser(r io.Reader, closer func() error) io.ReadCloser
-NewWriteCustomCloser(w io.Writer, closer func() error) io.WriteCloser
+eio.NewWriteCustomCloser(w io.Writer, closer func() error) io.WriteCloser
+
+// If a Close methods exists on the reader use it; other wise tag add a nop Close(); either way, you now have a WriterCloser
+eio.NewReadMaybeCloser(r io.Reader, closer func() error) io.ReadCloser
+eio.NewWriteMaybeCloser(w io.Writer, closer func() error) io.WriteCloser
 
 // Writer hooks
 eio.NewPreWriteCallbacks(w io.WriteCloser, callbacks ...func([]byte) error) io.WriteCloser // errors abort a write

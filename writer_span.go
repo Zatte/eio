@@ -49,13 +49,9 @@ func NewSpanWriter(
 
 			n, err = currentWriter.Write(p)
 			if err == ErrTooLargeWrite {
+				// If the write would never fit; return ErrTooLargeWrite
 				if len(p) > maxBytes {
 					return n, err
-				}
-				// Failure to close a file should not be recoverable; store in lastErr
-				if lastErr = currentWriter.Close(); lastErr != nil {
-					lastErr = fmt.Errorf("failed to close previous file in SpanWriter: %W", lastErr)
-					return 0, lastErr
 				}
 				reInitWriter()
 				if lastErr != nil {
